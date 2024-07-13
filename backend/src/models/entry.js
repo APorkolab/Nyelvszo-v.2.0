@@ -1,20 +1,25 @@
-const mongoose = require('mongoose');
-const EntrySchema = mongoose.Schema({
-	hungarian: {
-		type: String,
-		required: true
-	},
-	fieldOfExpertise: {
-		type: String,
-		required: true
-	},
-	wordType: {
-		type: String,
-	},
-	english: {
-		type: String,
-		required: true
-	},
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
+
+const Entry = sequelize.define('Entry', {
+  hungarian: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  fieldOfExpertise: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  wordType: {
+    type: DataTypes.STRING,
+  },
+  english: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+}, {
+  charset: 'utf8mb4',
+  collate: 'utf8mb4_general_ci',
 });
 
-module.exports = mongoose.model('Entry', EntrySchema);
+module.exports = Entry;

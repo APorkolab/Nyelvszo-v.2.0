@@ -1,46 +1,42 @@
-const fsp = require('fs').promises;
-const mongoose = require('mongoose');
+const fs = require('fs').promises;
+const sequelize = require('../config/db');
 const User = require('../models/user');
-const userList = require('./users.json');
-const entry = require('../models/entry');
+const Entry = require('../models/entry');
 
-const {
-	once
-} = require('events');
-const c = require('config');
-
-
-// mongoose.connection.dropDatabase();
-
-
-const AtlasUploader = async (model, fileName) => {
-	try {
-		const exists = await model.find().count();
-		if (!exists) {
-			throw new Error();
-		}
-	} catch (e) {
-		const source = await fsp.readFile(
-			`./src/seed/${fileName}.json`,
-			'utf8'
-		);
-		const list = JSON.parse(source);
-		if (model && model.insertMany) {
-			await model.insertMany(list, {
-				limit: 100
-			});
-		}
-
-	}
+const chunkArray = (array, chunkSize) => {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    chunks.push(array.slice(i, i + chunkSize));
+  }
+  return chunks;
 };
 
-(async () => {
-	AtlasUploader(entry, 'entries');
+const seedDatabase = async () => {
+  try {
+    // Synchronize all models
+    await sequelize.sync({
+      force: true
+    });
+    console.log("All tables have been created or updated.");
 
-	userList.forEach(async user => {
-		const newuser = new User(user);
-		await newuser.save();
-	})
-	console.log("Every file has been processed by the seeder!");
+    const users = JSON.parse(await fs.readFile('./seed/users.json', 'utf8'));
+    const entries = JSON.parse(await fs.readFile('./seed/entries.json', 'utf8'));
 
-})();
+    const userChunks = chunkArray(users, 1000);
+    const entryChunks = chunkArray(entries, 1000);
+
+    for (const chunk of userChunks) {
+      await User.bulkCreate(chunk);
+    }
+
+    for (const chunk of entryChunks) {
+      await Entry.bulkCreate(chunk);
+    }
+
+    console.log("Database has been seeded successfully!");
+  } catch (error) {
+    console.error("Error seeding the database: ", error);
+  }
+};
+
+module.exports = seedDatabase;

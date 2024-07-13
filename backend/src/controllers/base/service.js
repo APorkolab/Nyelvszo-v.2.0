@@ -1,38 +1,47 @@
+const {
+	Op
+} = require('sequelize');
+
 module.exports = (model, populateList = []) => {
 	return {
-		findAll: (params = {}) => {
+		findAll: async (params = {}) => {
 			if (Object.keys(params).length) {
-				Object.keys(params).map(key => {
+				Object.keys(params).forEach(key => {
 					params[key] = {
-						$regex: '.*' + params[key] + '.*',
-						$options: 'i'
+						[Op.like]: `%${params[key]}%`
 					};
 				});
-				return model.find(params).populate(...populateList);
 			}
-			return model.find(params).populate(...populateList);
+			return model.findAll({
+				where: params,
+				include: populateList
+			});
 		},
-		findOne: (id) => model.findById(id).populate(...populateList),
-		// findOne: (id) => model.findById(id).populate(),
-		update: (id, updateData) => model.findByIdAndUpdate(id, updateData, {
-			new: true
+		findOne: (id) => model.findByPk(id, {
+			include: populateList
+		}),
+		update: (id, updateData) => model.update(updateData, {
+			where: {
+				id
+			},
+			returning: true
 		}),
 		create: async (body) => {
-			const newEntity = new model(body);
-			const error = newEntity.validateSync();
-			if (!error) {
-				const saved = await newEntity.save();
-				return model.findById(saved._id);
-			}
-			throw new Error(error);
+			const newEntity = await model.create(body);
+			return model.findByPk(newEntity.id, {
+				include: populateList
+			});
 		},
 		delete: async (id) => {
-			const doc = await model.findByIdAndRemove(id);
-			if (!doc) {
+			const result = await model.destroy({
+				where: {
+					id
+				}
+			});
+			if (!result) {
 				throw new Error('Not found');
 			}
-			return doc.delete();
+			return result;
 		}
-
 	};
 }
