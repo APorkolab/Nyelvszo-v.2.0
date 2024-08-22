@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../../models/user');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 // Post
 router.post('/', async (req, res, next) => {
@@ -23,7 +24,7 @@ router.post('/', async (req, res, next) => {
 			});
 		}
 
-		const valid = await bcrypt.compare(password, user.password); // Itt használjuk a bcrypt.compare-t
+		const valid = await bcrypt.compare(password, user.password);
 		if (!valid) {
 			return res.status(401).json({
 				error: 'Invalid password'
