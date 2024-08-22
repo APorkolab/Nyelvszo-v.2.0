@@ -43,8 +43,8 @@ const seedDatabase = async () => {
     });
     console.log("All tables have been created or updated.");
 
-    await processFile('./seed/users.json', User);
-    await processFile('./seed/entries.json', Entry);
+    await processFile('./users.json', User);
+    await processFile('./entries.json', Entry);
 
     console.log("Database has been seeded successfully!");
   } catch (error) {
