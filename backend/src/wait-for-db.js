@@ -3,6 +3,7 @@ const logger = require('./logger/logger');
 const app = require('./server');
 const port = process.env.PORT || 3000;
 const seedDatabase = require('./seed/seeder');
+const authenticateJwt = require('./models/auth/authenticate');
 
 const dbConfig = process.env.DATABASE_URL ? {
   uri: process.env.DATABASE_URL

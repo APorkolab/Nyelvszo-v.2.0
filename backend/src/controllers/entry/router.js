@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Entry = require('../../models/entry');
-const authenticateJwt = require('../models/auth/authenticate');
+const authenticateJwt = require('../../models/auth/authenticate');
 const controller = require('../base/controller')(Entry);
 
 // Create - csak autentikált felhasználóknak
