@@ -1,46 +1,68 @@
 <div id="container">
-	<h1 id="home">Angol-magyar nyelvészeti szakszótár v.2.0.0 (2022-10-01)</h1>
+	<h1 id="home">Angol-magyar nyelvészeti szakszótár v.2.1.0 (2024-08-22)</h1>
 	<h5>Verziótörténet (Changelog):</h5>
 	<h5>Webfejlesztés, design: Dr. Porkoláb Ádám</h5>
-	<h5>Az adatbázisban található szócikkek száma a 2.0.0-ás verzióban: <strong>12384</strong></h5>
+	<h5>Az adatbázisban található szócikkek száma a 2.1.0-ás verzióban: <strong>12.385 db</strong></h5>
 	<ul>
+		<li><strong>2.1.0 (2024-08-22)</strong></li>
+		<ul>
+			<li><strong>Dokku deploy támogatás:</strong> Az alkalmazás felkészítése a Dokku-ra történő telepítésre, ezzel
+				biztosítva a könnyebb skálázhatóságot és üzemeltetést.</li>
+			<li><strong>SQL adatbázistárolás támogatás:</strong> Az alkalmazás átalakítása SQL alapú adatbázis kezelésére,
+				amely nagyobb teljesítményt és jobb adatkezelési képességeket biztosít.</li>
+			<li><strong>`AuthGuardService` és `RoleGuardService` fejlesztése:</strong> Aszinkron adatkezelés támogatása a
+				felhasználói szerepkörök valós időben történő ellenőrzésére, valamint a nyilvános oldalak kezelése, amelyek
+				lehetővé teszik a hozzáférést bejelentkezés nélkül is.</li>
+			<li><strong>`JwtInterceptor` továbbfejlesztése:</strong> A token lejárati idejének kezelése és automatikus token
+				frissítés bevezetése a felhasználói élmény javítása és a biztonság növelése érdekében.</li>
+			<li><strong>`NotificationService` kiterjesztése:</strong> Alapértelmezett címek és egységes értesítési kezelés
+				bevezetése a `ngx-toastr` használatával, hatékonyabb értesítési mechanizmusokat biztosítva a felhasználók
+				számára.</li>
+			<li><strong>Általános hibajavítások és refaktorálás:</strong> A kód tisztítása, felesleges ismétlések
+				eltávolítása, valamint a modern Angular és TypeScript ajánlásoknak megfelelő fejlesztések elvégzése.</li>
+			<li><strong>`throwError` új szintaxisának alkalmazása:</strong> A legújabb RxJS verzió támogatásának bevezetése a
+				hibakezelés megfelelő működésének biztosítása érdekében.</li>
+			<li><strong>Swagger dokumentáció:</strong> Teljes értékű Swagger dokumentáció készült a backendre vonatkozóan,
+				amely elérhető a következő címen: <a href="https://www.api.nyelvszo.eu/api-docs/"
+					target="_blank">https://www.api.nyelvszo.eu/api-docs/</a>.</li>
+			<li><strong>Fejlesztési dokumentáció frissítése:</strong> Az új fejlesztések, deploy lépések és adatbázis-kezelés
+				dokumentálása a könnyebb karbantarthatóság érdekében.</li>
+		</ul>
 		<li><strong>2.0.0 (2022-10-01)</strong></li>
-		- A Heroku deploy megszűnése miatt a NyelvSzó saját tárhelyre, elvileg a végleges helyére költözött.
-		<br>
-		- A Spring Boot-os applikáció teljes újraírásra került Angular 14-ben, TypeScript alapon. A backendet egy saját
-		fejlesztésű Express-es alkalmazás adja.
-		<br>
-		- NyelvSzó logó megtervezése.
-		<br>
-		- Weblapdesing fejlesztése, frontend fejlesztése.
-		<br>
-		- JWTWebtoken bevezetése és az adminfelület, 'sózott' (hashed) jelszóval védése megtörtént.
-		<br>
-		- A kezelőfelület és az alapvető szótári kifejezések többnyelvűsítését implementáltam.
+		<ul>
+			<li><strong>Heroku migráció:</strong> Az ingyenes Heroku deploy megszűnése miatt a NyelvSzó saját tárhelyre,
+				elvileg a végleges helyére költözött.</li>
+			<li><strong>Teljes frontend újraírás:</strong> A Spring Boot alapú alkalmazás teljes újraírásra került Angular
+				14-ben, TypeScript alapon. A backendet egy saját fejlesztésű Express-es alkalmazás biztosítja.</li>
+			<li><strong>Logó és design:</strong> NyelvSzó logó megtervezése és weblapdesign fejlesztése.</li>
+			<li><strong>JWT Web Token bevezetése:</strong> Az adminfelület biztonságának növelése `sózott` (hashed)
+				jelszavakkal és JWT token használatával.</li>
+			<li><strong>Többnyelvűsítés:</strong> A kezelőfelület és az alapvető szótári kifejezések többnyelvűsítésének
+				implementálása.</li>
+		</ul>
 		<li><strong>1.3 (2021-10-21)</strong></li>
-		- Teljes REST API támogatás elkészült.
-		<br>
-		- Adminfelület kiépítése és a CRUD-műveletek frontendes megvalósítása.
-		<br>
-		- Az adminfelület további fejlesztése megtörtént: felhasználók kezelésének kiépítését megvalósítottam.
-		<br>
-		- Weblapdesing fejlesztése, frontend fejlesztése.
-		<br>
-		- Spring Security bevezetése és az adminfelület jelszóval védése megtörtént.
+		<ul>
+			<li><strong>REST API támogatás:</strong> Teljes REST API támogatás elkészült.</li>
+			<li><strong>Adminfelület kiépítése:</strong> CRUD-műveletek frontendes megvalósítása, felhasználók kezelésének
+				kiépítése.</li>
+			<li><strong>Frontend fejlesztések:</strong> Weblapdesign fejlesztése és a felhasználói élmény optimalizálása.</li>
+			<li><strong>Spring Security bevezetése:</strong> Az adminfelület jelszóval védése és biztonsági intézkedések
+				bevezetése.</li>
+		</ul>
 		<li><strong>1.0 (2021-10-08)</strong></li>
-		- Az átnézett és részben javított szótári anyagot - melyet a kiadványban szereplő változat alapján
-		fejlesztettünk tovább - JSON formátumba mentettük és H2 adatbázis készült belőle.
-		<br>
-		- Az alapvető keresőfelület elkészült. Felhasznált technológiák: Bootstrap (HTML és CSS3), Spring Boot
-		(Thymeleaf, Lombok)
-		<br>
-		- A www.nyelvszo.eu domain megvásárlása.
-		<br>
+		<ul>
+			<li><strong>Szótári anyag feldolgozása:</strong> Az átnézett és részben javított szótári anyagot JSON formátumba
+				mentettük és H2 adatbázis készült belőle.</li>
+			<li><strong>Keresőfelület kialakítása:</strong> Az alapvető keresőfelület elkészült. Felhasznált technológiák:
+				Bootstrap (HTML és CSS3), Spring Boot (Thymeleaf, Lombok).</li>
+			<li><strong>Domain megvásárlása:</strong> A www.nyelvszo.eu domain megvásárlása.</li>
+		</ul>
 		<br>
 		<li><strong>Tervek a későbbi verziókra:</strong></li>
-		- További desingbeli fejlesztés.
-		<br>
-		- A szótári anyag fejlesztése és hibajavítása.
-		<br>
+		<ul>
+			<li>További designbeli fejlesztés.</li>
+			<li>A szótári anyag fejlesztése és hibajavítása.</li>
+			<li>API dokumentáció bővítése és a szótárhoz kapcsolódó szolgáltatások kibővítése.</li>
+		</ul>
 	</ul>
 </div>

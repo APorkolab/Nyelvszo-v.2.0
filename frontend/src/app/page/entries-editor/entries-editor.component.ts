@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Entry } from 'src/app/model/entry';
 import { EntryService } from 'src/app/service/entry.service';
@@ -12,7 +12,6 @@ import { NotificationService } from 'src/app/service/notification.service';
   styleUrls: ['./entries-editor.component.scss']
 })
 export class EntriesEditorComponent implements OnInit {
-  entry$!: Observable<Entry>;
   entry: Entry = new Entry();
   entity = 'Entry';
 
@@ -24,20 +23,16 @@ export class EntriesEditorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.entry$ = this.route.params.pipe(
+    this.route.params.pipe(
       switchMap((params) => {
         if (params['id'] === '0') {
           return of(new Entry());
         }
         return this.entryService.getOne(params['id']);
       })
-    );
-
-    this.entry$.subscribe({
+    ).subscribe({
       next: (entry) => {
-        if (entry) {
-          this.entry = entry;
-        }
+        this.entry = entry;
       },
     });
   }
@@ -72,10 +67,25 @@ export class EntriesEditorComponent implements OnInit {
     );
   }
 
-  showError(err: string): void {
+  showError(err: any): void {
+    let errorMessage = 'Something went wrong.';
+
+    if (err) {
+      if (err.error && typeof err.error === 'string') {
+        errorMessage = err.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object') {
+        errorMessage = JSON.stringify(err);
+      } else {
+        errorMessage = err.toString();
+      }
+    }
+
     this.notifyService.showError(
-      'Something went wrong. Details: ' + err,
+      `Error: ${errorMessage}`,
       'NyelvSzó v.2.0.0'
     );
   }
+
 }

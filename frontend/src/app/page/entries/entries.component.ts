@@ -4,7 +4,8 @@ import { Entry } from 'src/app/model/entry';
 import { ConfigService } from 'src/app/service/config.service';
 import { EntryService } from 'src/app/service/entry.service';
 import { NotificationService } from 'src/app/service/notification.service';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-entries',
@@ -13,7 +14,7 @@ import { Observable, of } from 'rxjs';
 })
 export class EntriesComponent implements OnInit {
   columns: any;
-  list$: Observable<Entry[]> = of([]);
+  list$!: Observable<Entry[]>;
   entity = 'Entry';
 
   constructor(
@@ -25,7 +26,8 @@ export class EntriesComponent implements OnInit {
 
   ngOnInit(): void {
     this.columns = this.config.entriesTableColumns;
-    this.list$ = this.entryService.getAll();
+    this.list$ = this.entryService.list$;
+    this.entryService.getAll().subscribe();
   }
 
   showSuccessDelete() {
@@ -35,9 +37,23 @@ export class EntriesComponent implements OnInit {
     );
   }
 
-  showError(err: string) {
+  showError(err: any): void {
+    let errorMessage = 'Something went wrong.';
+
+    if (err) {
+      if (err.error && typeof err.error === 'string') {
+        errorMessage = err.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object') {
+        errorMessage = JSON.stringify(err);
+      } else {
+        errorMessage = err.toString();
+      }
+    }
+
     this.notifyService.showError(
-      'Something went wrong. Details: ' + err,
+      `Error: ${errorMessage}`,
       'NyelvSzó v.2.0.0'
     );
   }
@@ -49,7 +65,9 @@ export class EntriesComponent implements OnInit {
   onDeleteOne(entry: Entry): void {
     this.entryService.delete(entry).subscribe({
       next: () => {
-        this.list$ = this.entryService.getAll();
+        this.list$ = this.list$.pipe(
+          map(entries => entries.filter(e => e._id !== entry._id))
+        );
         this.showSuccessDelete();
       },
       error: (err) => this.showError(err),

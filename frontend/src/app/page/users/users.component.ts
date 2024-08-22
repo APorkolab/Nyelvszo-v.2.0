@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { User } from 'src/app/model/user';
 import { ConfigService } from 'src/app/service/config.service';
 import { NotificationService } from 'src/app/service/notification.service';
@@ -13,7 +14,7 @@ import { UserService } from 'src/app/service/user.service';
 })
 export class UsersComponent implements OnInit {
   columns: any;
-  list$!: Observable<User[]>; // !-gal jelezzük, hogy később inicializálva lesz
+  list$!: Observable<User[]>;
   entity = 'User';
 
   constructor(
@@ -35,9 +36,23 @@ export class UsersComponent implements OnInit {
     );
   }
 
-  showError(err: string): void {
+  showError(err: any): void {
+    let errorMessage = 'Something went wrong.';
+
+    if (err) {
+      if (err.error && typeof err.error === 'string') {
+        errorMessage = err.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object') {
+        errorMessage = JSON.stringify(err);
+      } else {
+        errorMessage = err.toString();
+      }
+    }
+
     this.notifyService.showError(
-      'Something went wrong. Details: ' + err,
+      'Error: ' + errorMessage,
       'NyelvSzó v.2.0.0'
     );
   }
@@ -49,7 +64,9 @@ export class UsersComponent implements OnInit {
   onDeleteOne(user: User): void {
     this.userService.delete(user).subscribe({
       next: () => {
-        this.list$ = this.userService.getAll();
+        this.list$ = this.list$.pipe(
+          map(users => users.filter(u => u._id !== user._id))
+        );
         this.showSuccessDelete();
       },
       error: (err) => this.showError(err),

@@ -1,9 +1,9 @@
-import { UserService } from 'src/app/service/user.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { User } from 'src/app/model/user';
+import { UserService } from 'src/app/service/user.service';
 import { NotificationService } from 'src/app/service/notification.service';
 
 @Component({
@@ -15,6 +15,10 @@ export class UsersEditorComponent implements OnInit {
   user$!: Observable<User>;
   user: User = new User();
   entity = 'User';
+  isEditMode = false;
+
+  namePattern = "^[a-űA-Űa-zA-Z \\-\\.,!()']{3,60}$";
+  passwordPattern = '^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{7,}$';
 
   constructor(
     private userService: UserService,
@@ -29,6 +33,7 @@ export class UsersEditorComponent implements OnInit {
         if (param['id'] === '0') {
           return of(new User());
         }
+        this.isEditMode = true;
         return this.userService.getOne(param['id']);
       })
     );
@@ -72,9 +77,23 @@ export class UsersEditorComponent implements OnInit {
     );
   }
 
-  showError(err: string): void {
+  showError(err: any): void {
+    let errorMessage = 'Something went wrong.';
+
+    if (err) {
+      if (err.error && typeof err.error === 'string') {
+        errorMessage = err.error;
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object') {
+        errorMessage = JSON.stringify(err);
+      } else {
+        errorMessage = err.toString();
+      }
+    }
+
     this.notifyService.showError(
-      'Something went wrong. Details: ' + err,
+      'Error: ' + errorMessage,
       'NyelvSzó v.2.0.0'
     );
   }

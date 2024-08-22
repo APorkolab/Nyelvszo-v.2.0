@@ -26,8 +26,8 @@
 							<input [(ngModel)]="loginData['email']" type="email" class="form-control form-control-lg"
 								placeholder="Email" name="email" aria-label="Email" aria-describedby="basic-addon1" required />
 						</div>
-						<div *ngIf="loginForm.controls['email'] && !loginForm.controls['email'].valid" class="alert alert-danger"
-							role="alert">
+						<div *ngIf="loginForm.controls['email']?.touched && !loginForm.controls['email'].valid"
+							class="alert alert-danger" role="alert">
 							{{ 'emailValid' | translate }}
 						</div>
 					</div>
@@ -41,7 +41,7 @@
 								placeholder="{{ 'Password' | translate }}" name="password" aria-label="Password"
 								aria-describedby="basic-addon2" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" />
 						</div>
-						<div *ngIf="loginForm.controls['password'] && !loginForm.controls['password'].valid"
+						<div *ngIf="loginForm.controls['password']?.touched && !loginForm.controls['password'].valid"
 							class="alert alert-danger" role="alert">
 							{{ 'passValid' | translate }}
 						</div>

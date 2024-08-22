@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ConfigService } from './config.service';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,9 @@ export class BaseService<
   ) { }
 
   getAll(): Observable<T[]> {
-    return this.http.get<T[]>(this.getEntityUrl());
+    return this.http.get<T[]>(this.getEntityUrl()).pipe(
+      tap(entities => this.list$.next(entities))
+    );
   }
 
   getOne(_id: string | number): Observable<T> {
@@ -29,15 +32,30 @@ export class BaseService<
 
   create(entity: T): Observable<T> {
     const newEntity = { ...entity, _id: null };
-    return this.http.post<T>(this.getEntityUrl(), newEntity);
+    return this.http.post<T>(this.getEntityUrl(), newEntity).pipe(
+      tap((createdEntity) => {
+        this.list$.next([...this.list$.value, createdEntity]);
+      })
+    );
   }
 
   update(entity: T): Observable<T> {
-    return this.http.patch<T>(this.getEntityUrl(entity._id), entity);
+    return this.http.patch<T>(this.getEntityUrl(entity._id), entity).pipe(
+      tap((updatedEntity) => {
+        const list = this.list$.value.map(item =>
+          item._id === updatedEntity._id ? updatedEntity : item);
+        this.list$.next(list);
+      })
+    );
   }
 
   delete(entity: T): Observable<T> {
-    return this.http.delete<T>(this.getEntityUrl(entity._id));
+    return this.http.delete<T>(this.getEntityUrl(entity._id)).pipe(
+      tap(() => {
+        const list = this.list$.value.filter(item => item._id !== entity._id);
+        this.list$.next(list);
+      })
+    );
   }
 
   protected getEntityUrl(_id?: string | number): string {

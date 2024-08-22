@@ -9,14 +9,14 @@ export class FilterPipe<T extends { [key: string]: any }> implements PipeTransfo
     phrase: string = '',
     key: string = ''
   ): T[] | null {
-    if (!Array.isArray(value) || !phrase.trim()) {
+    if (!Array.isArray(value) || typeof phrase !== 'string' || !phrase.trim()) {
       return value;
     }
 
     phrase = phrase.toLowerCase().trim();
 
     return value.filter((item) => {
-      if (key) {
+      if (key && item[key] !== undefined) {
         return String(item[key]).toLowerCase().includes(phrase);
       } else {
         return this.valuesToString(item).includes(phrase);

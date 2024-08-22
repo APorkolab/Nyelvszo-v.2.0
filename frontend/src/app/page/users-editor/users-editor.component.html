@@ -2,18 +2,20 @@
 	<div class="col-12 d-flex justify-content-center text-center">
 		<div class="card">
 			<div class="card-header card-header-primary">
-				<h4 class="card-title">{{ (user$ | async) ? ('editUser' | translate) : ('addNewUser' | translate) }}</h4>
+				<h4 class="card-title">
+					{{ isEditMode ? ('editUser' | translate) : ('addNewUser' | translate) }}
+				</h4>
 			</div>
 			<div class="card-body">
 				<form #userForm="ngForm">
-					<input type="hidden" name="id" [(ngModel)]="user['_id']" />
+					<input type="hidden" name="id" [(ngModel)]="user._id" />
 
 					<!-- First Name Field -->
 					<h3 class="h5 text-secondary">{{ 'firstName' | translate }} *</h3>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<input type="text" class="form-control" name="firstName" [(ngModel)]="user['firstName']" required
+								<input type="text" class="form-control" name="firstName" [(ngModel)]="user.firstName" required
 									pattern="^[a-űA-Űa-zA-Z \-\.,!()']{3,60}$" />
 							</div>
 							<div *ngIf="userForm.controls['firstName'] && !userForm.controls['firstName'].valid"
@@ -28,7 +30,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<input type="text" class="form-control" name="lastName" [(ngModel)]="user['lastName']" required
+								<input type="text" class="form-control" name="lastName" [(ngModel)]="user.lastName" required
 									pattern="^[a-űA-Űa-zA-Z \-\.,!()']{3,60}$" />
 							</div>
 							<div *ngIf="userForm.controls['lastName'] && !userForm.controls['lastName'].valid"
@@ -43,7 +45,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<input type="email" class="form-control" name="email" [(ngModel)]="user['email']" required />
+								<input type="email" class="form-control" name="email" [(ngModel)]="user.email" required />
 							</div>
 							<div *ngIf="userForm.controls['email'] && !userForm.controls['email'].valid" class="alert alert-danger"
 								role="alert">
@@ -57,7 +59,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<input type="number" class="form-control" name="role" [(ngModel)]="user['role']" required min="1"
+								<input type="number" class="form-control" name="role" [(ngModel)]="user.role" required min="1"
 									max="3" />
 							</div>
 							<div *ngIf="userForm.controls['role'] && !userForm.controls['role'].valid" class="alert alert-danger"
@@ -72,7 +74,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<input type="password" class="form-control" name="password" [(ngModel)]="user['password']" required
+								<input type="password" class="form-control" name="password" [(ngModel)]="user.password" required
 									pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{7,}$" />
 							</div>
 							<div *ngIf="userForm.controls['password'] && !userForm.controls['password'].valid"
@@ -84,19 +86,20 @@
 
 					<!-- Action Buttons -->
 					<div class="d-flex justify-content-between">
-						<button *ngIf="user$ | async" (click)="onUpdate(user)" [disabled]="userForm.invalid" type="submit"
+						<button *ngIf="isEditMode" (click)="onUpdate(user)" [disabled]="userForm.invalid" type="submit"
 							class="btn btn-primary">
 							{{ 'updateUser' | translate }}
 						</button>
-						<button *ngIf="!(user$ | async)" (click)="onCreate(user)" [disabled]="userForm.invalid" type="submit"
+						<button *ngIf="!isEditMode" (click)="onCreate(user)" [disabled]="userForm.invalid" type="submit"
 							class="btn btn-primary">
 							{{ 'createUser' | translate }}
 						</button>
-						<button routerLink="/users" type="button" class="btn btn-danger">{{ 'cancelEdit' | translate }}</button>
+						<button routerLink="/users" type="button" class="btn btn-danger">
+							{{ 'cancelEdit' | translate }}
+						</button>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-4"></div>
 </div>
