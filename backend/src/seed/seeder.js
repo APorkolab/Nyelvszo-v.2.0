@@ -37,14 +37,13 @@ const processFile = async (filePath, model, chunkSize = 1000) => {
 
 const seedDatabase = async () => {
   try {
-    // Synchronize all models
     await sequelize.sync({
       force: true
     });
     console.log("All tables have been created or updated.");
 
-    await processFile('./users.json', User);
-    await processFile('./entries.json', Entry);
+    await processFile(__dirname + '/users.json', User);
+    await processFile(__dirname + '/entries.json', Entry);
 
     console.log("Database has been seeded successfully!");
   } catch (error) {
