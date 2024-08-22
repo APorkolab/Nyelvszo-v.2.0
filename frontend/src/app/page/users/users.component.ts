@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { User } from 'src/app/model/user';
 import { ConfigService } from 'src/app/service/config.service';
 import { NotificationService } from 'src/app/service/notification.service';
@@ -11,8 +12,8 @@ import { UserService } from 'src/app/service/user.service';
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
-  columns = this.config.usersTableColumn;
-  list$ = this.userService.getAll();
+  columns: any;
+  list$!: Observable<User[]>; // !-gal jelezzük, hogy később inicializálva lesz
   entity = 'User';
 
   constructor(
@@ -20,20 +21,23 @@ export class UsersComponent implements OnInit {
     private userService: UserService,
     private router: Router,
     private notifyService: NotificationService
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.columns = this.config.usersTableColumns;
+    this.list$ = this.userService.getAll();
+  }
 
-  showSuccessDelete() {
+  showSuccessDelete(): void {
     this.notifyService.showSuccess(
-      `${this.entity} delete successfully!`,
+      `${this.entity} deleted successfully!`,
       'NyelvSzó v.2.0.0'
     );
   }
 
-  showError(err: String) {
+  showError(err: string): void {
     this.notifyService.showError(
-      'Something went wrong. Details:' + err,
+      'Something went wrong. Details: ' + err,
       'NyelvSzó v.2.0.0'
     );
   }
@@ -44,9 +48,11 @@ export class UsersComponent implements OnInit {
 
   onDeleteOne(user: User): void {
     this.userService.delete(user).subscribe({
-      next: () => (this.list$ = this.userService.getAll()),
+      next: () => {
+        this.list$ = this.userService.getAll();
+        this.showSuccessDelete();
+      },
       error: (err) => this.showError(err),
-      complete: () => this.showSuccessDelete(),
     });
   }
 }

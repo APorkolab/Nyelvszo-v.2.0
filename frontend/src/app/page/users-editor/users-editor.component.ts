@@ -2,6 +2,7 @@ import { UserService } from 'src/app/service/user.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { User } from 'src/app/model/user';
 import { NotificationService } from 'src/app/service/notification.service';
 
@@ -20,57 +21,60 @@ export class UsersEditorComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private notifyService: NotificationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.route.params.subscribe({
-      next: (param) => {
-        if (param['id'] == '0') {
+    this.user$ = this.route.params.pipe(
+      switchMap((param) => {
+        if (param['id'] === '0') {
           return of(new User());
         }
-        this.user$ = this.userService.getOne(param['id']);
         return this.userService.getOne(param['id']);
-      },
-    });
+      })
+    );
+
     this.user$.subscribe({
-      next: (user) =>
-        (this.user = user ? user : this.user),
+      next: (user) => {
+        if (user) {
+          this.user = user;
+        }
+      },
     });
   }
 
-  onUpdate(user: User) {
+  onUpdate(user: User): void {
     this.userService.update(user).subscribe({
-      next: (category) => this.router.navigate(['/', 'users']),
+      next: () => this.router.navigate(['/', 'users']),
       error: (err) => this.showError(err),
       complete: () => this.showSuccessEdit(),
     });
   }
 
-  onCreate(user: User) {
+  onCreate(user: User): void {
     this.userService.create(user).subscribe({
-      next: (category) => this.router.navigate(['/', 'users']),
+      next: () => this.router.navigate(['/', 'users']),
       error: (err) => this.showError(err),
       complete: () => this.showSuccessCreate(),
     });
   }
 
-  showSuccessEdit() {
+  showSuccessEdit(): void {
     this.notifyService.showSuccess(
       `${this.entity} edited successfully!`,
       'NyelvSzó v.2.0.0'
     );
   }
 
-  showSuccessCreate() {
+  showSuccessCreate(): void {
     this.notifyService.showSuccess(
       `${this.entity} created successfully!`,
       'NyelvSzó v.2.0.0'
     );
   }
 
-  showError(err: String) {
+  showError(err: string): void {
     this.notifyService.showError(
-      'Something went wrong. Details:' + err,
+      'Something went wrong. Details: ' + err,
       'NyelvSzó v.2.0.0'
     );
   }

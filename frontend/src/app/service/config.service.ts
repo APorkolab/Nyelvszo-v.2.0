@@ -1,5 +1,5 @@
-import { INgxTableColumn } from './../data-table/ngx-data-table/ngx-data-table.component';
 import { Injectable } from '@angular/core';
+import { INgxTableColumn } from './../data-table/ngx-data-table/ngx-data-table.component';
 
 export interface IMenuItem {
   link: string;
@@ -11,8 +11,8 @@ export interface IMenuItem {
   providedIn: 'root',
 })
 export class ConfigService {
-  sidebarMenu: IMenuItem[] = [
-    { link: '/', title:  'Dashboard', icon: 'home' },
+  readonly sidebarMenu: IMenuItem[] = [
+    { link: '/', title: 'Dashboard', icon: 'home' },
     { link: '/movies', title: 'Planned Films', icon: 'calendar' },
     { link: '/watched-movies', title: 'Watched Films', icon: 'Youtube' },
     { link: '/directors', title: 'Directors', icon: 'video' },
@@ -20,22 +20,22 @@ export class ConfigService {
     { link: '/family-members', title: 'Family Members', icon: 'users' },
   ];
 
-  entriesTableColumns: INgxTableColumn[] = [
+  readonly entriesTableColumns: INgxTableColumn[] = [
     { key: '_id', title: 'ID' },
-    { key: 'hungarian', title:  'Hungarian version' },
+    { key: 'hungarian', title: 'Hungarian Version' },
     { key: 'fieldOfExpertise', title: 'Field Of Expertise' },
-    { key: 'wordType', title: 'Word type' },
-    { key: 'english', title: 'English version' },
+    { key: 'wordType', title: 'Word Type' },
+    { key: 'english', title: 'English Version' },
   ];
 
-  usersTableColumn: INgxTableColumn[] = [
+  readonly usersTableColumns: INgxTableColumn[] = [
     { key: '_id', title: 'ID' },
     { key: 'firstName', title: 'First Name' },
     { key: 'lastName', title: 'Last Name' },
     { key: 'email', title: 'E-mail' },
     { key: 'role', title: 'Role' },
-    { key: 'password', title: 'Encrypted password' },
+    { key: 'password', title: 'Encrypted Password' },
   ];
 
-  constructor() {}
+  constructor() { }
 }
