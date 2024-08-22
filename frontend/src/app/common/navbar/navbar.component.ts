@@ -10,7 +10,7 @@ import { User } from 'src/app/model/user';
   styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-  user$: Observable<User | null> | undefined;
+  user$!: Observable<User | null>;
   rights = '';
 
   constructor(
@@ -32,17 +32,21 @@ export class NavbarComponent implements OnInit {
   rightsOfAdmin(role: number): string {
     switch (role) {
       case 1:
-        return 'You may view all tables except users, but you may not create, edit or delete any entities.';
+        return this.translate.instant('You may view all tables except users, but you may not create, edit or delete any entities.');
       case 2:
-        return 'You may view all tables except users, and you may edit any of them but you may not create or delete any entities.';
+        return this.translate.instant('You may view all tables except users, and you may edit any of them but you may not create or delete any entities.');
       case 3:
-        return 'You may view all tables, and you may create, edit or delete any entities.';
+        return this.translate.instant('You may view all tables, and you may create, edit or delete any entities.');
       default:
-        return 'Invalid role value. The role value can only be 1, 2 or 3.';
+        return this.translate.instant('Invalid role value. The role value can only be 1, 2 or 3.');
     }
   }
 
   switchLanguage(lang: string): void {
     this.translate.use(lang);
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

@@ -24,7 +24,6 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {
     this.initializeUserFromSession();
-    this.handleUserSubscription();
   }
 
   private initializeUserFromSession(): void {
@@ -34,14 +33,6 @@ export class AuthService {
       this.access_token$.next(loginObject.accessToken);
       this.user$.next(loginObject.user);
     }
-  }
-
-  private handleUserSubscription(): void {
-    this.user$.subscribe({
-      next: (user) => {
-        user ? this.router.navigate(['/']) : this.clearSession();
-      },
-    });
   }
 
   private clearSession(): void {

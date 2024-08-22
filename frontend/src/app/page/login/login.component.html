@@ -20,11 +20,13 @@
 					<div class="col-12">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text bg-success text-white h-100" id="basic-addon1"><i
-										class="mdi mdi-account fs-4"></i></span>
+								<span class="input-group-text bg-success text-white h-100" id="basic-addon1">
+									<i class="mdi mdi-account fs-4"></i>
+								</span>
 							</div>
 							<input [(ngModel)]="loginData['email']" type="email" class="form-control form-control-lg"
-								placeholder="Email" name="email" aria-label="Email" aria-describedby="basic-addon1" required />
+								placeholder="{{ 'email' | translate }}" name="email" aria-label="Email" aria-describedby="basic-addon1"
+								required />
 						</div>
 						<div *ngIf="loginForm.controls['email']?.touched && !loginForm.controls['email'].valid"
 							class="alert alert-danger" role="alert">
@@ -34,8 +36,9 @@
 					<div class="col-12">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text bg-warning text-white h-100" id="basic-addon2"><i
-										class="mdi mdi-lock fs-4"></i></span>
+								<span class="input-group-text bg-warning text-white h-100" id="basic-addon2">
+									<i class="mdi mdi-lock fs-4"></i>
+								</span>
 							</div>
 							<input [(ngModel)]="loginData['password']" type="password" class="form-control form-control-lg"
 								placeholder="{{ 'Password' | translate }}" name="password" aria-label="Password"
