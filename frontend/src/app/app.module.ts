@@ -1,4 +1,4 @@
-import { NgModule, OnInit } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './common/navbar/navbar.component';
@@ -16,7 +16,7 @@ import { IconModule } from './icon/icon.module';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ConfigService, IMenuItem } from './service/config.service';
+import { ConfigService } from './service/config.service';
 import { DataTableModule } from './data-table/data-table.module';
 import { PrefaceComponent } from './page/preface/preface.component';
 import { VersionhistoryComponent } from './page/versionhistory/versionhistory.component';
@@ -72,19 +72,19 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptor,
-      deps: [AuthService],
       multi: true,
     },
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule implements OnInit {
-  sidebar!: IMenuItem[];
+export class AppModule {
+  constructor(private config: ConfigService) {
+    this.initializeSidebar();
+  }
 
-  constructor(private config: ConfigService) { }
-
-  ngOnInit() {
-    this.sidebar = this.config.sidebarMenu;
+  private initializeSidebar() {
+    const sidebarMenu = this.config.sidebarMenu;
+    console.log('Sidebar menu initialized:', sidebarMenu);
   }
 }
 
