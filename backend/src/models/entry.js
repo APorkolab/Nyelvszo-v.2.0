@@ -1,4 +1,6 @@
-const { DataTypes } = require('sequelize');
+const {
+  DataTypes
+} = require('sequelize');
 const sequelize = require('../config/db');
 
 const Entry = sequelize.define('Entry', {
@@ -18,6 +20,13 @@ const Entry = sequelize.define('Entry', {
     allowNull: false,
   },
 }, {
+  indexes: [{
+      fields: ['hungarian']
+    },
+    {
+      fields: ['english']
+    },
+  ],
   charset: 'utf8mb4',
   collate: 'utf8mb4_general_ci',
 });

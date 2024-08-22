@@ -1,20 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const Entry = require('../../models/entry');
+const authenticateJwt = require('../models/auth/authenticate');
 const controller = require('../base/controller')(Entry);
 
-// Create
-router.post('/', controller.create);
+// Create - csak autentikált felhasználóknak
+router.post('/', authenticateJwt, controller.create);
 
-// Read
+// Read - nyilvános
 router.get('/', controller.findAll);
 router.get('/:id', controller.findOne);
 
-// Update
-router.put('/:id', controller.update);
-router.patch('/:id', controller.update);
+// Update - csak autentikált felhasználóknak
+router.put('/:id', authenticateJwt, controller.update);
+router.patch('/:id', authenticateJwt, controller.update);
 
-// Delete 
-router.delete('/:id', controller.delete);
+// Delete - csak autentikált felhasználóknak
+router.delete('/:id', authenticateJwt, controller.delete);
 
 module.exports = router;

@@ -1,11 +1,10 @@
-const { Sequelize } = require('sequelize');
-const config = require('config');
+const {
+  Sequelize
+} = require('sequelize');
 
-const { username, password, database, host, dialect } = config.get('database');
-
-const sequelize = new Sequelize(database, username, password, {
-  host,
-  dialect,
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: 'mysql',
   dialectOptions: {
     charset: 'utf8mb4',
   },

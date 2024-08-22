@@ -10,39 +10,44 @@ router.post('/', async (req, res, next) => {
 		password
 	} = req.body;
 
-	const fMember = await User.findOne({
-		where: {
-			email
-		}
-	});
-
-	if (!fMember) {
-		res.sendStatus(404);
-		return res.json({
-			error: 'This user does not exist'
+	try {
+		const user = await User.findOne({
+			where: {
+				email
+			}
 		});
-	}
 
-	const valid = await fMember.verifyPassword(password);
-	if (valid) {
+		if (!user) {
+			return res.status(404).json({
+				error: 'This user does not exist'
+			});
+		}
+
+		const valid = await bcrypt.compare(password, user.password); // Itt használjuk a bcrypt.compare-t
+		if (!valid) {
+			return res.status(401).json({
+				error: 'Invalid password'
+			});
+		}
+
 		const accessToken = jwt.sign({
-				email: fMember.email,
-				role: fMember.role
+				email: user.email,
+				role: user.role
 			},
-			'SayWhatOneMoreGoddamnTime', {
-				expiresIn: '1h',
+			process.env.JWT_SECRET || 'SayWhatOneMoreGoddamnTime', {
+				expiresIn: '1h'
 			}
 		);
 
 		res.json({
 			accessToken,
 			user: {
-				...fMember.toJSON(),
+				...user.toJSON(),
 				password: ''
 			},
 		});
-	} else {
-		return res.sendStatus(401);
+	} catch (err) {
+		next(err);
 	}
 });
 

@@ -10,40 +10,43 @@ module.exports = (model, populateList = []) => {
 				const list = await service.findAll(req.query);
 				res.json(list);
 			} catch (err) {
-				next(err);
+				next(new createError.InternalServerError(err.message));
 			}
 		},
 		findOne: async (req, res, next) => {
 			try {
 				const entity = await service.findOne(req.params.id);
 				if (!entity) {
-					return next(new createError.NotFound("Entity has not found"));
+					return next(new createError.NotFound("Entity not found"));
 				}
 				res.json(entity);
 			} catch (err) {
-				next(err);
+				next(new createError.InternalServerError(err.message));
 			}
 		},
 		update: async (req, res, next) => {
 			try {
-				const [_, [entity]] = await service.update(req.params.id, req.body);
+				const [, [entity]] = await service.update(req.params.id, req.body);
+				if (!entity) {
+					return next(new createError.NotFound("Entity not found"));
+				}
 				res.json(entity);
 			} catch (err) {
-				res.status(501).json(err);
+				next(new createError.InternalServerError(err.message));
 			}
 		},
 		create: async (req, res, next) => {
 			try {
 				const entity = await service.create(req.body);
-				res.json(entity);
+				res.status(201).json(entity);
 			} catch (err) {
-				res.status(501).json(err);
+				next(new createError.InternalServerError(err.message));
 			}
 		},
 		delete: async (req, res, next) => {
 			try {
 				await service.delete(req.params.id);
-				res.json({});
+				res.status(204).json({});
 			} catch (err) {
 				if (err.message === "Not found") {
 					return next(new createError.NotFound(err.message));
@@ -52,4 +55,4 @@ module.exports = (model, populateList = []) => {
 			}
 		}
 	};
-}
+};

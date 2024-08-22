@@ -1,4 +1,6 @@
-const { DataTypes } = require('sequelize');
+const {
+  DataTypes
+} = require('sequelize');
 const bcrypt = require('bcrypt');
 const sequelize = require('../config/db');
 
@@ -31,13 +33,15 @@ const User = sequelize.define('User', {
       user.password = await bcrypt.hash(user.password, salt);
     },
   },
-  instanceMethods: {
-    validPassword: function(password) {
-      return bcrypt.compare(password, this.password);
-    },
-  },
+  indexes: [{
+    fields: ['email']
+  }, ],
   charset: 'utf8mb4',
   collate: 'utf8mb4_general_ci',
 });
+
+User.prototype.validPassword = function (password) {
+  return bcrypt.compare(password, this.password);
+};
 
 module.exports = User;

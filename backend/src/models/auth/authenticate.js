@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
 
   if (authHeader) {
     const token = authHeader.split(' ')[1];
-    jwt.verify(token, 'SayWhatOneMoreGoddamnTime', (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET || 'SayWhatOneMoreGoddamnTime', (err, user) => {
       if (err) {
         return res.sendStatus(403);
       }
@@ -14,6 +14,6 @@ module.exports = (req, res, next) => {
       next();
     });
   } else {
-    res.sendStatus(401);
+    return res.sendStatus(401);
   }
 };

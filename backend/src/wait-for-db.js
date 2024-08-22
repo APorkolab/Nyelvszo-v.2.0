@@ -1,15 +1,16 @@
 const mysql = require('mysql2/promise');
-const config = require('config');
 const logger = require('./logger/logger');
 const app = require('./server');
 const port = process.env.PORT || 3000;
 const seedDatabase = require('./seed/seeder');
 
-const dbConfig = {
-  host: process.env.DB_HOST || config.get('database.host'),
-  user: process.env.DB_USER || config.get('database.user'),
-  password: process.env.DB_PASSWORD || config.get('database.password'),
-  database: process.env.DB_NAME || config.get('database.name'),
+const dbConfig = process.env.DATABASE_URL ? {
+  uri: process.env.DATABASE_URL
+} : {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   port: 3306
 };
 

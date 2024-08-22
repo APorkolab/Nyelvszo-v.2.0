@@ -1,0 +1,354 @@
+openapi: 3.0.0
+info:
+  title: NyelvSzó V.2.0.0. API Documentation
+  description: NyelvSzó API Documentation for Entry, User models and Authentication
+  version: 2.0.0
+servers:
+  - url: https://www.api.nyelvszo.eu
+    description: Production API server
+  - url: http://localhost:3000
+    description: Local server
+externalDocs:
+  description: Frontend website
+  url: https://www.nyelvszo.eu
+
+paths:
+  /entries:
+    get:
+      summary: Get all entries
+      description: Retrieve a list of all entries. No authentication required.
+      responses:
+        '200':
+          description: A list of entries.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entry'
+    post:
+      summary: Create a new entry
+      description: Create a new entry in the database. Requires authentication.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entry'
+      responses:
+        '201':
+          description: Entry created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+        '401':
+          description: Unauthorized
+  /entries/{id}:
+    get:
+      summary: Get a specific entry
+      description: Retrieve a specific entry by its ID. No authentication required.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the entry to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The requested entry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+        '404':
+          description: Entry not found.
+    put:
+      summary: Update an existing entry
+      description: Update an existing entry by its ID. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the entry to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entry'
+      responses:
+        '200':
+          description: Entry updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+        '404':
+          description: Entry not found.
+        '401':
+          description: Unauthorized
+    patch:
+      summary: Partially update an existing entry
+      description: Partially update an existing entry by its ID. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the entry to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entry'
+      responses:
+        '200':
+          description: Entry updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entry'
+        '404':
+          description: Entry not found.
+        '401':
+          description: Unauthorized
+    delete:
+      summary: Delete an existing entry
+      description: Delete an existing entry by its ID. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the entry to delete.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Entry deleted successfully.
+        '404':
+          description: Entry not found.
+        '401':
+          description: Unauthorized
+
+  /users:
+    get:
+      summary: Get all users
+      description: Retrieve a list of all users. Requires authentication.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: A list of users.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+    post:
+      summary: Create a new user
+      description: Create a new user in the database. Requires authentication.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+  /users/{id}:
+    get:
+      summary: Get a specific user
+      description: Retrieve a specific user by its ID. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The requested user.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found.
+        '401':
+          description: Unauthorized
+    put:
+      summary: Update an existing user
+      description: Update an existing user by its ID. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found.
+        '401':
+          description: Unauthorized
+    patch:
+      summary: Partially update an existing user
+      description: Partially update an existing user by its ID. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found.
+        '401':
+          description: Unauthorized
+    delete:
+      summary: Delete an existing user
+      description: Delete an existing user by its ID. Requires authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to delete.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted successfully.
+        '404':
+          description: User not found.
+        '401':
+          description: Unauthorized
+
+  /login:
+    post:
+      summary: User login
+      description: Authenticate a user and return a JWT token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: password123
+      responses:
+        '200':
+          description: Login successful. Returns a JWT token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid email or password.
+        '404':
+          description: User not found.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Entry:
+      type: object
+      properties:
+        id:
+          type: string
+        hungarian:
+          type: string
+        fieldOfExpertise:
+          type: string
+        wordType:
+          type: string
+        english:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        role:
+          type: integer
