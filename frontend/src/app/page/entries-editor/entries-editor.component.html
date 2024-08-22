@@ -2,7 +2,7 @@
 	<div class="col-12 d-flex justify-content-center text-center">
 		<div class="card">
 			<div class="card-header card-header-primary">
-				<h4 class="card-title">{{ (entry$ | async) ? ('editEntry' | translate) : ('addNewEntry' | translate) }}</h4>
+				<h4 class="card-title">{{ entry._id ? ('editEntry' | translate) : ('addNewEntry' | translate) }}</h4>
 			</div>
 			<div class="card-body">
 				<form #entryForm="ngForm">
@@ -70,10 +70,14 @@
 
 					<!-- Buttons -->
 					<div class="d-flex justify-content-between">
-						<button *ngIf="entry$ | async" (click)="onUpdate(entry)" [disabled]="entryForm.invalid" type="submit"
-							class="btn btn-primary">{{'updateEntry' | translate}}</button>
-						<button *ngIf="!(entry$ | async)" (click)="onCreate(entry)" [disabled]="entryForm.invalid" type="submit"
-							class="btn btn-primary">{{'createEntry' | translate}}</button>
+						<button *ngIf="entry._id" (click)="onUpdate(entry)" [disabled]="entryForm.invalid" type="submit"
+							class="btn btn-primary">
+							{{ 'updateEntry' | translate }}
+						</button>
+						<button *ngIf="!entry._id" (click)="onCreate(entry)" [disabled]="entryForm.invalid" type="submit"
+							class="btn btn-primary">
+							{{ 'createEntry' | translate }}
+						</button>
 						<button routerLink="/entries" type="button" class="btn btn-danger">{{'cancelEdit' | translate}}</button>
 					</div>
 				</form>

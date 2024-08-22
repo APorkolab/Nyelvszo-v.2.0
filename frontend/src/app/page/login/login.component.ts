@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { IconModule } from 'src/app/icon/icon.module';
-import { AuthService, ILoginData } from 'src/app/service/auth.service';
-
+import { AuthService } from 'src/app/service/auth.service';
+export interface ILoginData {
+  email?: string;
+  password?: string;
+}
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -10,7 +13,7 @@ import { AuthService, ILoginData } from 'src/app/service/auth.service';
 export class LoginComponent implements OnInit {
   loginData: ILoginData = {};
 
-  constructor(private auth: AuthService, private icon: IconModule) {}
+  constructor(private auth: AuthService, private icon: IconModule) { }
 
   ngOnInit(): void {
     this.auth.logout();
