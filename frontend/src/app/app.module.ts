@@ -1,11 +1,9 @@
-import { NgModule } from '@angular/core';
-
+import { NgModule, OnInit } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './common/navbar/navbar.component';
 import { HomeComponent } from './page/home/home.component';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { ForbiddenComponent } from './page/forbidden/forbidden.component';
@@ -61,15 +59,13 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
       timeOut: 5000,
       extendedTimeOut: 3000,
     }),
-    TranslateModule.forRoot(
-      {
-        loader:{
-          provide: TranslateLoader,
-          useFactory: httpTranslateLoader,
-          deps: [HttpClient]
-        }
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: httpTranslateLoader,
+        deps: [HttpClient]
       }
-    )
+    })
   ],
   exports: [FormsModule, TranslateModule],
   providers: [
@@ -82,10 +78,16 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {   sidebar: IMenuItem[] = this.config.sidebarMenu;
+export class AppModule implements OnInit {
+  sidebar!: IMenuItem[];
 
-  constructor(private config: ConfigService) {}}
+  constructor(private config: ConfigService) { }
 
-  export function httpTranslateLoader(http: HttpClient){
-    return new TranslateHttpLoader(http);
+  ngOnInit() {
+    this.sidebar = this.config.sidebarMenu;
   }
+}
+
+export function httpTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}

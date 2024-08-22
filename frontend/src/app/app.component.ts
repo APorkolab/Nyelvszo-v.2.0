@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfigService, IMenuItem } from './service/config.service';
 
@@ -7,14 +7,20 @@ import { ConfigService, IMenuItem } from './service/config.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  constructor(private config: ConfigService, public translate: TranslateService) {translate.addLangs(['hu', 'en']);
-  translate.setDefaultLang('hu');}
-
-  sidebar: IMenuItem[] = this.config.sidebarMenu;
+export class AppComponent implements OnInit {
+  sidebar: IMenuItem[] = [];
   title = 'NyelvSzo2.0';
 
-  switchLanguage(lang: string){
+  constructor(private config: ConfigService, public translate: TranslateService) {
+    translate.addLangs(['hu', 'en']);
+    translate.setDefaultLang('hu');
+  }
+
+  ngOnInit(): void {
+    this.sidebar = this.config.sidebarMenu;
+  }
+
+  switchLanguage(lang: string): void {
     this.translate.use(lang);
   }
 }
