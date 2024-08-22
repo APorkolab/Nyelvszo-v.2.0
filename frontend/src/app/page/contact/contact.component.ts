@@ -6,8 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./contact.component.scss']
 })
 export class ContactComponent implements OnInit {
-
-  constructor() { }
+  currentYear: number;
+  constructor() {
+    this.currentYear = new Date().getFullYear();
+  }
 
   ngOnInit(): void {
   }

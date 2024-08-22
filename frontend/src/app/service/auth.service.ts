@@ -20,45 +20,37 @@ export interface ILoginData {
   providedIn: 'root',
 })
 export class AuthService {
-  apiUrl: string = environment.apiUrl;
-  loginUrl: string = '';
+  private readonly loginUrl = `${environment.apiUrl}/login`;
 
-  user$: BehaviorSubject<User | null> =
-    new BehaviorSubject<User | null>(null);
-
+  user$: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
   access_token$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   constructor(private http: HttpClient, private router: Router) {
-    this.loginUrl = `${this.apiUrl}/login`;
+    this.initializeUserFromSession();
+    this.handleUserSubscription();
+  }
 
+  private initializeUserFromSession(): void {
     const loginInfo = sessionStorage.getItem('login');
     if (loginInfo) {
-      const loginObject = JSON.parse(loginInfo);
+      const loginObject: IAuthModel = JSON.parse(loginInfo);
       this.access_token$.next(loginObject.accessToken);
       this.user$.next(loginObject.user);
     }
+  }
 
-  //   this.user$.subscribe({
-  //     next: (user) => {
-  //         // this.router.navigate(['/']);
-  //         this.access_token$.next('');
-  //         sessionStorage.removeItem('login');
-  //       }
-  //     }
-  // )}
+  private handleUserSubscription(): void {
     this.user$.subscribe({
       next: (user) => {
-        if (user) {
-          this.router.navigate(['/']);
-        } else {
-          // this.router.navigate(['/', 'login']);
-          this.access_token$.next('');
-          sessionStorage.removeItem('login');
-        }
+        user ? this.router.navigate(['/']) : this.clearSession();
       },
     });
   }
-  
+
+  private clearSession(): void {
+    this.access_token$.next('');
+    sessionStorage.removeItem('login');
+  }
 
   login(loginData: ILoginData): void {
     this.http.post<IAuthModel>(this.loginUrl, loginData).subscribe({
@@ -67,11 +59,17 @@ export class AuthService {
         this.access_token$.next(response.accessToken);
         sessionStorage.setItem('login', JSON.stringify(response));
       },
-      error: (err) => console.error(err),
+      error: (err) => this.handleLoginError(err),
     });
   }
 
+  private handleLoginError(error: any): void {
+    console.error('Login failed', error);
+    // Lehetőség van a hibák részletes kezelésére, például értesítések megjelenítésére
+  }
+
   logout(): void {
+    this.clearSession();
     this.user$.next(null);
   }
 }

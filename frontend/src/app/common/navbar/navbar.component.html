@@ -11,41 +11,41 @@
 					<li>
 						<a [routerLink]="['/']" class="nav-link text-secondary">
 							<i-feather name="home"></i-feather>
-							{{'Home'|translate}}
+							{{'Home' | translate}}
 						</a>
 					</li>
 					<li>
 						<a [routerLink]="['/entries']" routerLinkActive="active" class="nav-link text-white">
 							<i-feather name="filter"></i-feather>
-							{{'Search'|translate}}
+							{{'Search' | translate}}
 						</a>
 					</li>
 					<li>
 						<a [routerLink]="['/preface']" routerLinkActive="active" class="nav-link text-white">
 							<i-feather name="book-open"></i-feather>
-							{{'Preface'|translate}}
+							{{'Preface' | translate}}
 						</a>
 					</li>
 					<li>
 						<a routerLink="/versionhistory" class="nav-link text-white">
 							<i-feather name="file-text"></i-feather>
-							{{'Version history'|translate}}
+							{{'Version history' | translate}}
 						</a>
 					</li>
 					<li>
 						<a [routerLink]="['/contact']" class="nav-link text-white">
 							<i-feather name="message-circle"></i-feather>
-							{{'Contact'|translate}}
+							{{'Contact' | translate}}
 						</a>
 					</li>
 					<li>
 						<a [routerLink]="['/users']" routerLinkActive="active" class="nav-link text-white">
 							<i-feather name="users"></i-feather>
-							{{'Users'|translate}}
+							{{'Users' | translate}}
 						</a>
 					</li>
 					<li>
-						<label>{{'Select your language'|translate}}:</label>
+						<label>{{'Select your language' | translate}}:</label>
 						<span class="form-inline">
 							<select class="form-control" #selectedLang (change)="switchLanguage(selectedLang.value)">
 								<option *ngFor="let language of translate.getLangs()" [value]="language"
@@ -61,29 +61,26 @@
 	</div>
 	<div class="px-3 py-2 border-bottom mb-3">
 		<div class="container d-flex flex-wrap justify-content-center">
-
-			<!-- <form class="col-12 col-lg-auto mb-2 mb-lg-0 me-lg-auto" role="search">
-				<input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-			</form> -->
-
-			<div>
-				<span class=" d-flex flex-column flex-shrink-0" *ngIf="(user$ | async)">{{'Welcome'|translate}},
-					{{this.user$.value?.firstName
-					+
-					' ' + this.user$.value?.lastName}}! </span>
-				<span class="flex-column mb-auto" *ngIf="(user$ | async)">{{'Your level of the role'|translate}}: {{
-					this.user$.value?.role}}. </span>
+			<div *ngIf="user$ | async as user">
+				<span class="d-flex flex-column flex-shrink-0">
+					{{'Welcome' | translate}}, {{user?.firstName}} {{user?.lastName}}!
+				</span>
+				<span class="flex-column mb-auto">
+					{{'Your level of the role' | translate}}: {{user?.role}}.
+				</span>
 				<br>
-				<span class="flex-column mb-auto" *ngIf="(user$ | async)" right>{{rightsOfAdmin(this.user$.value?.role
-					|| 1)}}</span>
+				<span class="flex-column mb-auto">
+					{{rightsOfAdmin(user?.role || 1)}}
+				</span>
 			</div>
-			<button *ngIf="(user$ | async)" type="button" class="btn btn-light text-dark me-2"
-				[routerLink]="['/login']">{{'Sign out'|translate}}
+			<button *ngIf="user$ | async" type="button" class="btn btn-light text-dark me-2" [routerLink]="['/login']">
+				{{'Sign out' | translate}}
 				<i-feather name="log-out"></i-feather>
 			</button>
-			<button *ngIf="!(user$ | async)" type="button" class="btn btn-light text-dark me-2"
-				[routerLink]="['/login']">{{'Sign in'|translate}}<i-feather name="log-in"></i-feather></button>
+			<button *ngIf="!(user$ | async)" type="button" class="btn btn-light text-dark me-2" [routerLink]="['/login']">
+				{{'Sign in' | translate}}
+				<i-feather name="log-in"></i-feather>
+			</button>
 		</div>
 	</div>
-
 </header>

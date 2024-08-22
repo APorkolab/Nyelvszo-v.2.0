@@ -4,6 +4,7 @@ import { Entry } from 'src/app/model/entry';
 import { ConfigService } from 'src/app/service/config.service';
 import { EntryService } from 'src/app/service/entry.service';
 import { NotificationService } from 'src/app/service/notification.service';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-entries',
@@ -11,8 +12,8 @@ import { NotificationService } from 'src/app/service/notification.service';
   styleUrls: ['./entries.component.scss']
 })
 export class EntriesComponent implements OnInit {
-  columns = this.config.entriesTableColumns;
-  list$ = this.entryService.getAll();
+  columns: any;
+  list$: Observable<Entry[]> = of([]);
   entity = 'Entry';
 
   constructor(
@@ -20,20 +21,23 @@ export class EntriesComponent implements OnInit {
     private entryService: EntryService,
     private router: Router,
     private notifyService: NotificationService
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.columns = this.config.entriesTableColumns;
+    this.list$ = this.entryService.getAll();
+  }
 
   showSuccessDelete() {
     this.notifyService.showSuccess(
-      `${this.entity} delete successfully!`,
+      `${this.entity} deleted successfully!`,
       'NyelvSzó v.2.0.0'
     );
   }
 
-  showError(err: String) {
+  showError(err: string) {
     this.notifyService.showError(
-      'Something went wrong. Details:' + err,
+      'Something went wrong. Details: ' + err,
       'NyelvSzó v.2.0.0'
     );
   }
@@ -44,9 +48,11 @@ export class EntriesComponent implements OnInit {
 
   onDeleteOne(entry: Entry): void {
     this.entryService.delete(entry).subscribe({
-      next: () => (this.list$ = this.entryService.getAll()),
+      next: () => {
+        this.list$ = this.entryService.getAll();
+        this.showSuccessDelete();
+      },
       error: (err) => this.showError(err),
-      complete: () => this.showSuccessDelete(),
     });
   }
 }
