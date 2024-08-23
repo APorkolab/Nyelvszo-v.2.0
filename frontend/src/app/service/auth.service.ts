@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { map, tap } from 'rxjs/operators';
 import { User } from './../model/user';
+import { NotificationService } from './notification.service';
 
 export interface IAuthModel {
   success: boolean;
@@ -22,7 +23,7 @@ export class AuthService {
   user$: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
   access_token$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private notify: NotificationService) {
     this.initializeUserFromSession();
   }
 
@@ -37,19 +38,20 @@ export class AuthService {
 
   private clearSession(): void {
     this.access_token$.next('');
+    this.user$.next(null);
     sessionStorage.removeItem('login');
     this.router.navigate(['login']);
   }
 
-  login(loginData: { email?: string; password?: string }): void {
-    this.http.post<IAuthModel>(this.loginUrl, loginData).subscribe({
-      next: (response: IAuthModel) => {
+  login(loginData: { email?: string; password?: string }): Observable<IAuthModel> {
+    return this.http.post<IAuthModel>(this.loginUrl, loginData).pipe(
+      tap((response: IAuthModel) => {
         this.user$.next(response.user);
         this.access_token$.next(response.accessToken);
         sessionStorage.setItem('login', JSON.stringify(response));
-      },
-      error: (err) => this.handleLoginError(err),
-    });
+      }),
+      // Itt visszatérítünk egy observable-t, így a komponensek tudnak feliratkozni rá
+    );
   }
 
   refreshToken(): Observable<string> {
@@ -68,13 +70,13 @@ export class AuthService {
     );
   }
 
-  private handleLoginError(error: any): void {
+  private handleLoginError(error: HttpErrorResponse): void {
     console.error('Login failed', error);
-    alert('Login failed: ' + error.message);
+    this.notify.showError('Login failed: ' + error.message);
   }
 
   logout(): void {
     this.clearSession();
-    this.user$.next(null);
+    this.notify.showSuccess('Logout has been completed');
   }
 }
