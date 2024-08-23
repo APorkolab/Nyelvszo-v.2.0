@@ -18,6 +18,15 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    // Kivételek hozzáadása a nyílt API-khoz és a fordítási kérésekhez
+    const publicUrls = ['/entries', '/login'];
+    const translationUrls = ['/assets/i18n/'];
+
+    if (publicUrls.some(url => request.url.includes(url) && request.method === 'GET') ||
+      translationUrls.some(url => request.url.includes(url))) {
+      return next.handle(request);
+    }
+
     let accessToken = this.authService.access_token$.getValue();
 
     if (this.isTokenExpired(accessToken)) {
