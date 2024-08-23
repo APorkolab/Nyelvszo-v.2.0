@@ -19,11 +19,16 @@ export class JwtInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     // Kivételek hozzáadása a nyílt API-khoz és a fordítási kérésekhez
-    const publicUrls = ['/entries', '/login'];
+    const publicGetUrls = ['/entries'];
+    const publicAllMethodsUrls = ['/login'];
     const translationUrls = ['/assets/i18n/'];
 
-    if (publicUrls.some(url => request.url.includes(url) && request.method === 'GET') ||
-      translationUrls.some(url => request.url.includes(url))) {
+    // Ha a kérés GET az /entries végponthoz vagy bármilyen kérés a /login végponthoz, engedjük át
+    if (
+      (publicGetUrls.some(url => request.url.includes(url)) && request.method === 'GET') ||
+      publicAllMethodsUrls.some(url => request.url.includes(url)) ||
+      translationUrls.some(url => request.url.includes(url))
+    ) {
       return next.handle(request);
     }
 
