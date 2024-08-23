@@ -34,7 +34,8 @@ export class BaseService<
     const newEntity = { ...entity, _id: null };
     return this.http.post<T>(this.getEntityUrl(), newEntity).pipe(
       tap((createdEntity) => {
-        this.list$.next([...this.list$.value, createdEntity]);
+        const currentList = this.list$.value;
+        this.list$.next([...currentList, createdEntity]);
       })
     );
   }
@@ -42,9 +43,9 @@ export class BaseService<
   update(entity: T): Observable<T> {
     return this.http.patch<T>(this.getEntityUrl(entity._id), entity).pipe(
       tap((updatedEntity) => {
-        const list = this.list$.value.map(item =>
+        const updatedList = this.list$.value.map(item =>
           item._id === updatedEntity._id ? updatedEntity : item);
-        this.list$.next(list);
+        this.list$.next(updatedList);
       })
     );
   }

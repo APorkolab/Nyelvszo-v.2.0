@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { User } from 'src/app/model/user';
 import { ConfigService } from 'src/app/service/config.service';
 import { NotificationService } from 'src/app/service/notification.service';
@@ -64,9 +64,13 @@ export class UsersComponent implements OnInit {
   onDeleteOne(user: User): void {
     this.userService.delete(user).subscribe({
       next: () => {
-        this.list$ = this.list$.pipe(
-          map(users => users.filter(u => u._id !== user._id))
-        );
+        this.userService.list$.pipe(
+          tap(entries => {
+            const updatedEntries = entries.filter(e => e._id !== user._id);
+            this.userService.list$.next(updatedEntries);
+          })
+        ).subscribe();
+
         this.showSuccessDelete();
       },
       error: (err) => this.showError(err),

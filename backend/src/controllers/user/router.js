@@ -11,7 +11,7 @@ router.get('/', controller.findAll);
 router.get('/:id', controller.findOne);
 
 // Update
-router.put('/:id', controller.update);
+router.put('/:id', controller.replace);
 router.patch('/:id', controller.update);
 
 // Delete 

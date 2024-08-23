@@ -5,7 +5,7 @@ import { ConfigService } from 'src/app/service/config.service';
 import { EntryService } from 'src/app/service/entry.service';
 import { NotificationService } from 'src/app/service/notification.service';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-entries',
@@ -65,9 +65,14 @@ export class EntriesComponent implements OnInit {
   onDeleteOne(entry: Entry): void {
     this.entryService.delete(entry).subscribe({
       next: () => {
-        this.list$ = this.list$.pipe(
-          map(entries => entries.filter(e => e._id !== entry._id))
-        );
+        // Instead of reassigning `this.list$`, use `tap` to update the list.
+        this.entryService.list$.pipe(
+          tap(entries => {
+            const updatedEntries = entries.filter(e => e._id !== entry._id);
+            this.entryService.list$.next(updatedEntries);
+          })
+        ).subscribe();
+
         this.showSuccessDelete();
       },
       error: (err) => this.showError(err),

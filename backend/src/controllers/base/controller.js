@@ -24,9 +24,12 @@ module.exports = (model, populateList = []) => {
 				next(new createError.InternalServerError(err.message));
 			}
 		},
-		update: async (req, res, next) => {
+
+		// PUT: Teljes erőforrás csere
+		replace: async (req, res, next) => {
 			try {
-				const [, [entity]] = await service.update(req.params.id, req.body);
+				const entity = await service.replace(req.params.id, req.body);
+
 				if (!entity) {
 					return next(new createError.NotFound("Entity not found"));
 				}
@@ -35,6 +38,21 @@ module.exports = (model, populateList = []) => {
 				next(new createError.InternalServerError(err.message));
 			}
 		},
+
+		// PATCH: Részleges frissítés
+		update: async (req, res, next) => {
+			try {
+				const entity = await service.update(req.params.id, req.body);
+
+				if (!entity) {
+					return next(new createError.NotFound("Entity not found"));
+				}
+				res.json(entity);
+			} catch (err) {
+				next(new createError.InternalServerError(err.message));
+			}
+		},
+
 		create: async (req, res, next) => {
 			try {
 				const entity = await service.create(req.body);
@@ -43,6 +61,7 @@ module.exports = (model, populateList = []) => {
 				next(new createError.InternalServerError(err.message));
 			}
 		},
+
 		delete: async (req, res, next) => {
 			try {
 				await service.delete(req.params.id);

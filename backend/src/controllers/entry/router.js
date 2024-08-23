@@ -12,7 +12,7 @@ router.get('/', controller.findAll);
 router.get('/:id', controller.findOne);
 
 // Update - csak autentikált felhasználóknak
-router.put('/:id', authenticateJwt, controller.update);
+router.put('/:id', authenticateJwt, controller.replace);
 router.patch('/:id', authenticateJwt, controller.update);
 
 // Delete - csak autentikált felhasználóknak
