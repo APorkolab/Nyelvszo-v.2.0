@@ -4,7 +4,6 @@ const User = require('../../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-// Post
 router.post('/', async (req, res, next) => {
 	const {
 		email,
@@ -24,8 +23,8 @@ router.post('/', async (req, res, next) => {
 			});
 		}
 
-		const valid = await bcrypt.compare(password, user.password);
-		if (!valid) {
+		const isValidPassword = await bcrypt.compare(password, user.password);
+		if (!isValidPassword) {
 			return res.status(401).json({
 				error: 'Invalid password'
 			});
@@ -33,7 +32,7 @@ router.post('/', async (req, res, next) => {
 
 		const accessToken = jwt.sign({
 				email: user.email,
-				role: user.role
+				role: user.role,
 			},
 			process.env.JWT_SECRET || 'SayWhatOneMoreGoddamnTime', {
 				expiresIn: '1h'
@@ -44,10 +43,11 @@ router.post('/', async (req, res, next) => {
 			accessToken,
 			user: {
 				...user.toJSON(),
-				password: ''
+				password: '',
 			},
 		});
 	} catch (err) {
+		console.error('Login error:', err);
 		next(err);
 	}
 });

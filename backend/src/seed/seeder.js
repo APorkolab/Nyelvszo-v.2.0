@@ -6,6 +6,7 @@ const readline = require('readline');
 const sequelize = require('../config/db');
 const User = require('../models/user');
 const Entry = require('../models/entry');
+const bcrypt = require('bcrypt');
 
 const chunkArray = (array, chunkSize) => {
   const chunks = [];
@@ -24,7 +25,15 @@ const processFile = async (filePath, model, chunkSize = 1000) => {
 
   let chunk = [];
   for await (const line of rl) {
-    chunk.push(JSON.parse(line));
+    const data = JSON.parse(line);
+
+    // Jelszó hashelése, ha a User modellel dolgozunk
+    if (model === User && data.password) {
+      const salt = await bcrypt.genSalt(10);
+      data.password = await bcrypt.hash(data.password, salt);
+    }
+
+    chunk.push(data);
     if (chunk.length === chunkSize) {
       await model.bulkCreate(chunk);
       chunk = [];

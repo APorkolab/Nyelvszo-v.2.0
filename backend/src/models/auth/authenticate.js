@@ -7,6 +7,7 @@ module.exports = (req, res, next) => {
     const token = authHeader.split(' ')[1];
     jwt.verify(token, process.env.JWT_SECRET || 'SayWhatOneMoreGoddamnTime', (err, user) => {
       if (err) {
+        console.error('Token verification error:', err);
         return res.sendStatus(403);
       }
 
