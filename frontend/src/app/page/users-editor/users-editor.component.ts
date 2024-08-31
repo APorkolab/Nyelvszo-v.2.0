@@ -31,6 +31,7 @@ export class UsersEditorComponent implements OnInit {
     this.user$ = this.route.params.pipe(
       switchMap((param) => {
         if (param['id'] === '0') {
+          this.isEditMode = false;
           return of(new User());
         }
         this.isEditMode = true;

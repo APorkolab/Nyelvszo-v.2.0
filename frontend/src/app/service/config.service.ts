@@ -21,7 +21,7 @@ export class ConfigService {
   ];
 
   readonly entriesTableColumns: INgxTableColumn[] = [
-    { key: '_id', title: 'ID' },
+    { key: 'id', title: 'ID' },
     { key: 'hungarian', title: 'Hungarian Version' },
     { key: 'fieldOfExpertise', title: 'Field Of Expertise' },
     { key: 'wordType', title: 'Word Type' },
@@ -29,7 +29,7 @@ export class ConfigService {
   ];
 
   readonly usersTableColumns: INgxTableColumn[] = [
-    { key: '_id', title: 'ID' },
+    { key: 'id', title: 'ID' },
     { key: 'firstName', title: 'First Name' },
     { key: 'lastName', title: 'Last Name' },
     { key: 'email', title: 'E-mail' },

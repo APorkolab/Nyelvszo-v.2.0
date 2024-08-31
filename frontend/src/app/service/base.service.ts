@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class BaseService<
-  T extends { _id: string | number;[key: string]: any }
+  T extends { id: string | number;[key: string]: any }
 > {
   private readonly apiUrl: string = environment.apiUrl;
   protected entity: string = '';
@@ -26,12 +26,12 @@ export class BaseService<
     );
   }
 
-  getOne(_id: string | number): Observable<T> {
-    return this.http.get<T>(this.getEntityUrl(_id));
+  getOne(id: string | number): Observable<T> {
+    return this.http.get<T>(this.getEntityUrl(id));
   }
 
   create(entity: T): Observable<T> {
-    const newEntity = { ...entity, _id: null };
+    const newEntity = { ...entity, id: null };
     return this.http.post<T>(this.getEntityUrl(), newEntity).pipe(
       tap((createdEntity) => {
         const currentList = this.list$.value;
@@ -41,25 +41,25 @@ export class BaseService<
   }
 
   update(entity: T): Observable<T> {
-    return this.http.patch<T>(this.getEntityUrl(entity._id), entity).pipe(
+    return this.http.patch<T>(this.getEntityUrl(entity.id), entity).pipe(
       tap((updatedEntity) => {
         const updatedList = this.list$.value.map(item =>
-          item._id === updatedEntity._id ? updatedEntity : item);
+          item.id === updatedEntity.id ? updatedEntity : item);
         this.list$.next(updatedList);
       })
     );
   }
 
   delete(entity: T): Observable<T> {
-    return this.http.delete<T>(this.getEntityUrl(entity._id)).pipe(
+    return this.http.delete<T>(this.getEntityUrl(entity.id)).pipe(
       tap(() => {
-        const list = this.list$.value.filter(item => item._id !== entity._id);
+        const list = this.list$.value.filter(item => item.id !== entity.id);
         this.list$.next(list);
       })
     );
   }
 
-  protected getEntityUrl(_id?: string | number): string {
-    return `${this.apiUrl}/${this.entity}${_id ? `/${_id}` : ''}`;
+  protected getEntityUrl(id?: string | number): string {
+    return `${this.apiUrl}/${this.entity}${id ? `/${id}` : ''}`;
   }
 }

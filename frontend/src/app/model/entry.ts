@@ -1,6 +1,6 @@
 export class Entry {
-	[k: string]: any;
-  _id: number | string = '';
+  [k: string]: any;
+  id: number | string = '';
   hungarian: string = '';
   fieldOfExpertise: string = '';
   wordType: string = '';

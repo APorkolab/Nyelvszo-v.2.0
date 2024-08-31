@@ -1,18 +1,19 @@
 const express = require('express');
 const createError = require('http-errors');
 const baseService = require('../base/service');
+const asyncHandler = require('express-async-handler');
 
 module.exports = (model, populateList = []) => {
 	const service = baseService(model, populateList);
 	return {
-		findAll: async (req, res, next) => {
+		findAll: asyncHandler(async (req, res, next) => {
 			try {
 				const list = await service.findAll(req.query);
 				res.json(list);
 			} catch (err) {
 				next(new createError.InternalServerError(err.message));
 			}
-		},
+		}),
 		findOne: async (req, res, next) => {
 			try {
 				const entity = await service.findOne(req.params.id);

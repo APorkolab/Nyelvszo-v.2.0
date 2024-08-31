@@ -8,7 +8,7 @@
 			</div>
 			<div class="card-body">
 				<form #userForm="ngForm">
-					<input type="hidden" name="id" [(ngModel)]="user._id" />
+					<input type="hidden" name="id" [(ngModel)]="user.id" />
 
 					<!-- First Name Field -->
 					<h3 class="h5 text-secondary">{{ 'firstName' | translate }} *</h3>
@@ -84,19 +84,17 @@
 						</div>
 					</div>
 
-					<!-- Action Buttons -->
+					<!-- Buttons -->
 					<div class="d-flex justify-content-between">
-						<button *ngIf="isEditMode" (click)="onUpdate(user)" [disabled]="userForm.invalid" type="submit"
+						<button *ngIf="user.id" (click)="onUpdate(user)" [disabled]="userForm.invalid" type="submit"
 							class="btn btn-primary">
 							{{ 'updateUser' | translate }}
 						</button>
-						<button *ngIf="!isEditMode" (click)="onCreate(user)" [disabled]="userForm.invalid" type="submit"
+						<button *ngIf="!user.id" (click)="onCreate(user)" [disabled]="userForm.invalid" type="submit"
 							class="btn btn-primary">
 							{{ 'createUser' | translate }}
 						</button>
-						<button routerLink="/users" type="button" class="btn btn-danger">
-							{{ 'cancelEdit' | translate }}
-						</button>
+						<button routerLink="/entries" type="button" class="btn btn-danger">{{'cancelEdit' | translate}}</button>
 					</div>
 				</form>
 			</div>

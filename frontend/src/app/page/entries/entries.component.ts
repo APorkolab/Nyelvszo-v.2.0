@@ -59,7 +59,7 @@ export class EntriesComponent implements OnInit {
   }
 
   onSelectOne(entry: Entry): void {
-    this.router.navigate(['/', 'entries', 'edit', entry._id]);
+    this.router.navigate(['/', 'entries', 'edit', entry.id]);
   }
 
   onDeleteOne(entry: Entry): void {
@@ -68,7 +68,7 @@ export class EntriesComponent implements OnInit {
         // Instead of reassigning `this.list$`, use `tap` to update the list.
         this.entryService.list$.pipe(
           tap(entries => {
-            const updatedEntries = entries.filter(e => e._id !== entry._id);
+            const updatedEntries = entries.filter(e => e.id !== entry.id);
             this.entryService.list$.next(updatedEntries);
           })
         ).subscribe();

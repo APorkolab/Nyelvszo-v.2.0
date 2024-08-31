@@ -3,12 +3,12 @@ const router = express.Router();
 const User = require('../../models/user');
 const controller = require('../base/controller')(User);
 
-// Create
-router.post('/', controller.create);
-
 // Read
 router.get('/', controller.findAll);
 router.get('/:id', controller.findOne);
+
+// Create
+router.post('/', controller.create);
 
 // Update
 router.put('/:id', controller.replace);

@@ -58,7 +58,7 @@ export class UsersComponent implements OnInit {
   }
 
   onSelectOne(user: User): void {
-    this.router.navigate(['/', 'users', 'edit', user._id]);
+    this.router.navigate(['/', 'users', 'edit', user.id]);
   }
 
   onDeleteOne(user: User): void {
@@ -66,7 +66,7 @@ export class UsersComponent implements OnInit {
       next: () => {
         this.userService.list$.pipe(
           tap(entries => {
-            const updatedEntries = entries.filter(e => e._id !== user._id);
+            const updatedEntries = entries.filter(e => e.id !== user.id);
             this.userService.list$.next(updatedEntries);
           })
         ).subscribe();
