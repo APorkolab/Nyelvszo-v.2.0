@@ -20,7 +20,8 @@ app.use(morgan('combined', {
   stream: logger.stream,
 }));
 app.use(express.static('public'));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // JSON kérések méretkorlátjának növelése
+app.use(express.urlencoded({ limit: '50mb', extended: true })); // URL-encoded kérések méretkorlátjának növelése
 
 const authenticateJwt = require('./models/auth/authenticate');
 

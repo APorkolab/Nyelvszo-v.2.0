@@ -63,10 +63,9 @@ module.exports = (model, populateList = []) => {
 		},
 
 		create: async (body) => {
-			const newEntity = await model.create(body);
-			return model.findByPk(newEntity.id, {
-				include: populateList
-			});
+				const newEntity = await model.create(body);
+				// Csak az új entitást küldjük vissza, nem az összes elemet
+				return newEntity;
 		},
 
 		delete: async (id) => {

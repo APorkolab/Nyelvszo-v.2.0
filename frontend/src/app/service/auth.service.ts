@@ -1,9 +1,9 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, from, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { map, tap } from 'rxjs/operators';
 import { User } from './../model/user';
 import { NotificationService } from './notification.service';
 
@@ -21,7 +21,9 @@ export class AuthService {
   private readonly refreshUrl = `${environment.apiUrl}/refresh-token`;
 
   user$: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
-  access_token$: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  access_token$: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private isRefreshing = false;
+  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
 
   constructor(private http: HttpClient, private router: Router, private notify: NotificationService) {
     this.initializeUserFromSession();
@@ -37,7 +39,7 @@ export class AuthService {
   }
 
   private clearSession(): void {
-    this.access_token$.next('');
+    this.access_token$.next(null);
     this.user$.next(null);
     sessionStorage.removeItem('login');
     this.router.navigate(['login']);
@@ -50,13 +52,24 @@ export class AuthService {
         this.access_token$.next(response.accessToken);
         sessionStorage.setItem('login', JSON.stringify(response));
       }),
-      // Itt visszatérítünk egy observable-t, így a komponensek tudnak feliratkozni rá
+      catchError(this.handleLoginError.bind(this))
     );
   }
 
   refreshToken(): Observable<string> {
+    if (this.isRefreshing) {
+      return this.refreshTokenSubject.asObservable().pipe(
+        switchMap(token => token ? from([token]) : throwError(() => new Error('No token available')))
+      );
+    }
+
+    this.isRefreshing = true;
+    this.refreshTokenSubject.next(null);
+
     return this.http.post<{ accessToken: string }>(this.refreshUrl, {}).pipe(
       tap((response) => {
+        this.isRefreshing = false;
+        this.refreshTokenSubject.next(response.accessToken);
         this.access_token$.next(response.accessToken);
         const currentUser = this.user$.getValue();
         if (currentUser) {
@@ -66,13 +79,27 @@ export class AuthService {
           );
         }
       }),
-      map(response => response.accessToken)
+      map(response => response.accessToken),
+      catchError((error) => {
+        this.isRefreshing = false;
+        this.handleAuthError(error);
+        return throwError(() => new Error('Token refresh failed'));
+      })
     );
   }
 
-  private handleLoginError(error: HttpErrorResponse): void {
+  private handleLoginError(error: HttpErrorResponse): Observable<never> {
     console.error('Login failed', error);
     this.notify.showError('Login failed: ' + error.message);
+    return throwError(() => new Error('Login failed'));
+  }
+
+  private handleAuthError(error: HttpErrorResponse): void {
+    console.error('Auth error', error);
+    if (error.status === 401) {
+      this.clearSession();
+    }
+    this.notify.showError('Authentication error: ' + error.message);
   }
 
   logout(): void {
