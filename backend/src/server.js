@@ -26,9 +26,9 @@ app.use(express.urlencoded({ limit: '50mb', extended: true })); // URL-encoded k
 const authenticateJwt = require('./models/auth/authenticate');
 
 app.use('/entries', require('./controllers/entry/router'));
-app.use('/versionhistory', require('./controllers/entry/router'));
-app.use('/contact', require('./controllers/entry/router'));
-app.use('/preface', require('./controllers/entry/router'));
+app.use('/versionhistory', require('./controllers/versionhistory/router'));
+app.use('/contact', require('./controllers/contact/router'));
+app.use('/preface', require('./controllers/preface/router'));
 app.use('/users', require('./controllers/user/router'));
 app.use('/login', require('./controllers/login/router'));
 

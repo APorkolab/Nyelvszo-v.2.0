@@ -4,6 +4,10 @@ const User = require('../../models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+if (!process.env.JWT_SECRET) {
+	throw new Error('FATAL ERROR: JWT_SECRET is not defined.');
+}
+
 router.post('/', async (req, res, next) => {
 	const {
 		email,
@@ -34,7 +38,7 @@ router.post('/', async (req, res, next) => {
 				email: user.email,
 				role: user.role,
 			},
-			process.env.JWT_SECRET || 'SayWhatOneMoreGoddamnTime', {
+			process.env.JWT_SECRET, {
 				expiresIn: '1h'
 			}
 		);

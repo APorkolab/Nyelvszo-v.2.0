@@ -2,18 +2,9 @@ const express = require('express');
 const createError = require('http-errors');
 const baseService = require('../base/service');
 const asyncHandler = require('express-async-handler');
-const bcrypt = require('bcrypt');
 
 module.exports = (model, populateList = []) => {
   const service = baseService(model, populateList);
-
-  const hashPassword = async (user) => {
-    if (user.password) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(user.password, salt);
-    }
-    return user;
-  };
 
   return {
     findAll: asyncHandler(async (req, res, next) => {
@@ -39,8 +30,7 @@ module.exports = (model, populateList = []) => {
     // PUT: Teljes erőforrás csere
     replace: async (req, res, next) => {
       try {
-        const user = await hashPassword(req.body);
-        const entity = await service.replace(req.params.id, user);
+        const entity = await service.replace(req.params.id, req.body);
 
         if (!entity) {
           return next(new createError.NotFound("Entity not found"));
@@ -54,8 +44,7 @@ module.exports = (model, populateList = []) => {
     // PATCH: Részleges frissítés
     update: async (req, res, next) => {
       try {
-        const user = await hashPassword(req.body); // Hasheljük a jelszót
-        const entity = await service.update(req.params.id, user);
+        const entity = await service.update(req.params.id, req.body);
 
         if (!entity) {
           return next(new createError.NotFound("Entity not found"));
@@ -68,8 +57,7 @@ module.exports = (model, populateList = []) => {
 
     create: async (req, res, next) => {
       try {
-        const user = await hashPassword(req.body);
-        const entity = await service.create(user);
+        const entity = await service.create(req.body);
         res.status(201).json(entity);
       } catch (err) {
         next(new createError.InternalServerError(err.message));

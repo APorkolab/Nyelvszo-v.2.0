@@ -64,17 +64,7 @@ export class EntriesComponent implements OnInit {
 
   onDeleteOne(entry: Entry): void {
     this.entryService.delete(entry).subscribe({
-      next: () => {
-        // Instead of reassigning `this.list$`, use `tap` to update the list.
-        this.entryService.list$.pipe(
-          tap(entries => {
-            const updatedEntries = entries.filter(e => e.id !== entry.id);
-            this.entryService.list$.next(updatedEntries);
-          })
-        ).subscribe();
-
-        this.showSuccessDelete();
-      },
+      next: () => this.showSuccessDelete(),
       error: (err) => this.showError(err),
     });
   }

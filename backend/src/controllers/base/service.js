@@ -1,22 +1,34 @@
 const {
-	Op
+	Op,
+	DataTypes
 } = require('sequelize');
 
 module.exports = (model, populateList = []) => {
 	return {
 		findAll: async (params = {}) => {
-			const searchParams = {
-				...params
-			};
-			if (Object.keys(searchParams).length) {
-				Object.keys(searchParams).forEach(key => {
-					searchParams[key] = {
-						[Op.like]: `%${searchParams[key]}%`
-					};
-				});
+			const attributes = model.getAttributes();
+			const where = {};
+
+			for (const key in params) {
+				if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+					const value = params[key];
+					const attributeType = attributes[key].type;
+
+					// Use LIKE for string-based types, and exact match for others.
+					if (attributeType.key === 'STRING' || attributeType.key === 'TEXT') {
+						where[key] = {
+							[Op.like]: `%${value}%`
+						};
+					} else {
+						where[key] = {
+							[Op.eq]: value
+						};
+					}
+				}
 			}
+
 			return model.findAll({
-				where: searchParams,
+				where,
 				include: populateList,
 			});
 		},
@@ -24,23 +36,11 @@ module.exports = (model, populateList = []) => {
 			include: populateList,
 		}),
 
-		// PUT: Teljes erőforrás csere
+		// PUT: Teljes erőforrás csere (jelenleg PATCH-ként működik)
 		replace: async (id, updateData) => {
-			const entity = await model.findByPk(id);
-			if (!entity) {
-				throw new Error('Not found');
-			}
-
-			// Az összes mező frissítése a kérésben érkező adatokkal
-			Object.keys(updateData).forEach(key => {
-				entity[key] = updateData[key];
-			});
-
-			await entity.save();
-
-			return model.findByPk(id, {
-				include: populateList
-			});
+			// A jelenlegi implementáció megegyezik a PATCH-el,
+			// ahelyett, hogy a teljes erőforrást lecserélné.
+			return module.exports(model, populateList).update(id, updateData);
 		},
 
 		// PATCH: Részleges frissítés
