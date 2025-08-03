@@ -1,18 +1,39 @@
-const {
-  Sequelize
-} = require('sequelize');
+const { Sequelize } = require('sequelize');
+const path = require('path');
 
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST,
-  dialect: 'mysql',
-  dialectOptions: {
-    charset: 'utf8mb4',
-  },
-  define: {
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_general_ci',
-  },
-  logging: false,
-});
+// Determine the environment, default to 'development'
+const env = process.env.NODE_ENV || 'development';
+
+// Load the corresponding config file
+const config = require(path.join(__dirname, '..', '..', 'config', 'config.json'))[env];
+
+let sequelize;
+if (config.use_env_variable) {
+  // For production, use the DATABASE_URL environment variable
+  sequelize = new Sequelize(process.env[config.use_env_variable], {
+    ...config,
+    dialectOptions: {
+      charset: 'utf8mb4',
+    },
+    define: {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci',
+    },
+    logging: false,
+  });
+} else {
+  // For development and test, use the credentials from the config file
+  sequelize = new Sequelize(config.database, config.username, config.password, {
+    ...config,
+    dialectOptions: {
+      charset: 'utf8mb4',
+    },
+    define: {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_general_ci',
+    },
+    logging: false,
+  });
+}
 
 module.exports = sequelize;
