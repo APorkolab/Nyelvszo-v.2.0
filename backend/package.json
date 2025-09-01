@@ -19,7 +19,7 @@
     "mongoose": "^6.3.5",
     "mongoose-bcrypt": "^1.9.0",
     "morgan": "^1.10.0",
-    "npkill": "^0.8.3",
+    "npkill": "^0.12.2",
     "should": "^13.2.3",
     "supertest": "^6.2.3",
     "swagger-ui-express": "^4.4.0",
