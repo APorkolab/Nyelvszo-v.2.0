@@ -23,7 +23,7 @@
     "should": "^13.2.3",
     "supertest": "^6.2.3",
     "swagger-ui-express": "^4.4.0",
-    "winston": "^3.7.2",
+    "winston": "^3.17.0",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
