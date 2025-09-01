@@ -21,7 +21,7 @@
     "morgan": "^1.10.0",
     "npkill": "^0.8.3",
     "should": "^13.2.3",
-    "supertest": "^6.2.3",
+    "supertest": "^6.3.4",
     "swagger-ui-express": "^4.4.0",
     "winston": "^3.7.2",
     "yamljs": "^0.3.0"
